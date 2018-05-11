@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import url, include
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='RetroFlow API')
 
 
 urlpatterns = [
-    url(r'^auth', include('auth.urls')),
+    url(r'^auth/', include('auth.urls')),
     url('admin/', admin.site.urls),
+    url(r'^api_docs/', schema_view),
 ]
