@@ -19,3 +19,12 @@ class TestProfileModel(TestCase):
         # profile instance
         user.save()
         self.assertIsInstance(user.profile, team.Profile)
+
+    def test_public_info_creation(self):
+        User = get_user_model()
+
+        user = User.objects.create(
+            email="test-user@mail.com", password="password11")
+        # Check that a Profile instance has been crated
+        self.assertIsInstance(user.profile, team.Profile)
+        self.assertIsInstance(user.profile.public_info, team.PublicInfo)
