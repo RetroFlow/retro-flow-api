@@ -1,5 +1,6 @@
 from django.db import models
 from djchoices import ChoiceItem, DjangoChoices
+from django.utils.translation import ugettext_lazy as _
 from .team import Group, GroupAssignee, Profile, UserProfileAssignee
 
 
