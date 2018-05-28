@@ -40,19 +40,19 @@ class Profile(models.Model):
         max_length=255,
         null=True,
         blank=True,
-        verbose_name=_('First name')
+        verbose_name=_('First name'),
     )
     last_name = models.CharField(
         max_length=255,
         null=True,
         blank=True,
-        verbose_name=_('Last name')
+        verbose_name=_('Last name'),
     )
 
     icon = models.URLField(
         verbose_name=_('Link to user avatar image'),
         null=True,
-        blank=True
+        blank=True,
     )
 
     public_info = models.OneToOneField(
@@ -60,7 +60,7 @@ class Profile(models.Model):
         related_name='profile',
         verbose_name=_('Public info'),
         on_delete=models.CASCADE,
-        null=True
+        null=True,
     )
 
     @property
@@ -86,19 +86,29 @@ def create_public_info_for_new_user(sender, created, instance, **kwargs):
 
 
 class UserRole(models.Model):
-    name = models.CharField(
+    class Role:
+        REGULAR_USER = 'user'
+        OWNER = 'owner'
+        ADMIN = 'admin'
+
+    code = models.CharField(
         max_length=20,
+        unique=True,
+        null=True
     )
     description = models.TextField(
         max_length=200,
         null=True,
-        blank=True
+        blank=True,
     )
 
     @classmethod
     def get_default_role(cls):
         # TODO: add default role proper management
-        pass
+        return cls.objects.get(code=cls.Role.REGULAR_USER)
+
+    def __str__(self):
+        return "{}".format(self.code)
 
 
 class Team(models.Model):
@@ -162,8 +172,8 @@ class MembershipInfo(models.Model):
 
     role = models.ForeignKey(
         UserRole,
-        on_delete=models.CASCADE,
-        default=UserRole.get_default_role(),
+        on_delete=models.SET_DEFAULT,
+        default=UserRole.get_default_role,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

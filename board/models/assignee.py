@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Assignee(models.Model):
+class Assignee:
     @property
     def assignee(self):
         raise NotImplementedError
@@ -13,9 +13,6 @@ class Assignee(models.Model):
     @property
     def icon(self):
         raise NotImplementedError
-
-    class Meta:
-        abstract = True
 
 
 class GroupAssignee(Assignee):
