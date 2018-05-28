@@ -94,7 +94,9 @@ class Board(models.Model):
     settings = models.OneToOneField(
         'BoardSettings',
         #default=BoardSettings.get_default_settings,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
 
     )
 
