@@ -2,6 +2,8 @@ drf_yasg==1.7.4
 djangorestframework_jwt==1.11.0
 Django==2.0.5
 django_choices==1.6.0
-djchoices==0.2
 PyJWT==1.6.4
 djangorestframework==3.8.2
+django_extensions
+flex
+swagger_spec_validator
