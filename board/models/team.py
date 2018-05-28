@@ -105,7 +105,7 @@ class UserRole(models.Model):
     @classmethod
     def get_default_role(cls):
         # TODO: add default role proper management
-        return cls.objects.get(code=cls.Role.REGULAR_USER)
+        return cls.objects.get(code=cls.Role.REGULAR_USER).id
 
     def __str__(self):
         return "{}".format(self.code)
