@@ -31,9 +31,9 @@ class UserManager(BaseUserManager):
 
         normalized_email = self.normalize_email(email)
         username = normalized_email.split("@")[0]
-        kwargs['username'] = username
-        logger.info("username:  " + username)
-        logger.info("normalized email:  " + normalized_email)
+
+        # add auto-generated username if not present in kwargs
+        kwargs['username'] = kwargs.get('username') or username
 
         user = self.model(email=normalized_email, **kwargs)
         user.set_password(password)
@@ -55,6 +55,14 @@ class UserManager(BaseUserManager):
 
         return user
 
+    def create(self, *args, **kwargs):
+        is_staff = kwargs.get('is_staff')
+
+        if is_staff:
+            return self.create_superuser(*args, **kwargs)
+        else:
+            return self.create_user(*args, **kwargs)
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     # Each `User` needs a human-readable unique identifier that we can use to
@@ -63,8 +71,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     jwt_secret = models.UUIDField(default=uuid.uuid4)
 
     username = models.CharField(db_index=True, max_length=255, blank=True)
-    first_name = models.CharField(max_length=255, null=True, blank=True)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
 
     email = models.EmailField(db_index=True, unique=True)
 
@@ -113,10 +119,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         This method is required by Django for things like handling emails.
         Typically this would be the user's first and last name.
         """
-        if self.first_name and self.last_name:
-            return "{} {}".format(self.first_name, self.last_name)
-        else:
-            return self.username
+        return self.username
 
     def get_short_name(self):
         """
@@ -124,10 +127,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         Typically, this would be the user's first name. Since we do not store
         the user's real name, we return their username instead.
         """
-        if self.first_name:
-            return self.first_name
-        else:
-            return self.username
+
+        return self.username
 
     def _generate_jwt_token(self):
         """
