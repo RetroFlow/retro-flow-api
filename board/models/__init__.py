@@ -2,7 +2,7 @@ from .team import (
     Team, Profile, PublicInfo, MembershipInfo, Group, UserRole
 )
 from .board import (
-    BoardSettings, Board, ItemStatus, Column, Sprint
+    BoardSettings, Board, ItemStatus, Column, Sprint, ColumnTemplate
 )
 
 from .items import (

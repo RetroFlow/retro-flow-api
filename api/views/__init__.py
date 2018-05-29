@@ -1,1 +1,1 @@
-from .board_views import BoardSettingsApiView
+from .board_views import BoardSettingsApiView, BoardViewSet

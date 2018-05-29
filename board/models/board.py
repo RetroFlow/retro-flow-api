@@ -24,12 +24,13 @@ class BoardSettings(models.Model):
 
     @classmethod
     def get_default_settings(cls):
-        settings = BoardSettings(
+
+        settings = dict(
             sprint_start_date=datetime.today(),
             sprint_duration=14,
-            discussion_period=4
+            discussion_period=4,
+            column_names=[{'name': 'Start'}, {'name': 'Continue'}, {'name': 'Stop'}]
         )
-
         return settings
 
 
@@ -47,14 +48,17 @@ class Column(models.Model):
 
 
 class ColumnTemplate(models.Model):
+    class UnsavedForeignKey(models.ForeignKey):
+        # A ForeignKey which can point to an unsaved object
+        allow_unsaved_instance_assignment = True
     name = models.CharField(
         max_length=40,
         verbose_name=_('Name'),
     )
-    settings = models.ForeignKey(
+    settings = UnsavedForeignKey(
         'BoardSettings',
         on_delete=models.CASCADE,
-        related_name='column_templates'
+        related_name='column_names'
     )
 
 
@@ -83,6 +87,10 @@ class Board(models.Model):
         DISCUSSION = ChoiceItem('d', 'Discussion')
         RUNNING = ChoiceItem('r', 'Running')
         CLOSED = ChoiceItem('c', 'Closed')
+
+    name = models.CharField(
+        max_length=40
+    )
 
     status = models.CharField(
         max_length=2,
