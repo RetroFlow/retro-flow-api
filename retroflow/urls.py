@@ -23,6 +23,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     url(r'^auth/', include('authentication.urls')),
+    url(r'^core/', include('api.urls')),
     url('admin/', admin.site.urls),
 
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
