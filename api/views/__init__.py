@@ -1,0 +1,1 @@
+from .board_views import BoardSettingsApiView
