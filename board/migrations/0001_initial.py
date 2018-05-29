@@ -30,28 +30,10 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='BoardSettings',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sprint_start_date', models.DateField()),
-                ('sprint_duration', models.DurationField()),
-                ('discussion_period', models.DurationField()),
-                ('icon', models.URLField(blank=True, null=True, verbose_name='Link to board avatar image')),
-            ],
-        ),
-        migrations.CreateModel(
             name='Column',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=40)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='ColumnTemplate',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=40, verbose_name='Name')),
-                ('settings', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='column_templates', to='board.BoardSettings')),
             ],
         ),
         migrations.CreateModel(
@@ -218,11 +200,6 @@ class Migration(migrations.Migration):
             model_name='board',
             name='previous_sprint',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='board_where_is_previous', to='board.Sprint'),
-        ),
-        migrations.AddField(
-            model_name='board',
-            name='settings',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='board.BoardSettings'),
         ),
         migrations.AddField(
             model_name='assignee',

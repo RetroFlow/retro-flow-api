@@ -7,10 +7,10 @@ from .items import ItemStatus
 
 class BoardSettings(models.Model):
 
-    sprint_start_date = models.DateField()
+    sprint_start_date = models.DateTimeField()
 
-    sprint_duration = models.DurationField()
-    discussion_period = models.DurationField()
+    sprint_duration = models.IntegerField()
+    discussion_period = models.IntegerField()
 
     icon = models.URLField(
         verbose_name=_('Link to board avatar image'),
@@ -25,9 +25,9 @@ class BoardSettings(models.Model):
     @classmethod
     def get_default_settings(cls):
         settings = BoardSettings(
-            sprint_start_date=date.today(),
-            sprint_duration=timedelta(weeks=2),
-            discussion_period=timedelta(days=4)
+            sprint_start_date=datetime.today(),
+            sprint_duration=14,
+            discussion_period=4
         )
 
         return settings
