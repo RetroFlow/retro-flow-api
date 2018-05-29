@@ -26,7 +26,7 @@ class BoardSettingsSerializer(ModelSerializer):
 
 class BoardSerializer(ModelSerializer):
     settings = BoardSettingsSerializer(read_only=False)
-    status = serializers.CharField(source='get_status_display')
+    status = serializers.CharField(source='get_status_display', read_only=True)
 
     class Meta:
         fields = ['name', 'settings', 'status', 'created_at']
