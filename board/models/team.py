@@ -69,6 +69,10 @@ class Profile(models.Model):
             return '{} {}'.format(self.first_name, self.last_name)
         return self.user.username
 
+    @property
+    def username(self):
+        return self.user.username
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profile_for_new_user(sender, created, instance, **kwargs):

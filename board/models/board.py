@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.utils.translation import ugettext_lazy as _
 from djchoices import ChoiceItem, DjangoChoices
 from .items import ItemStatus
@@ -25,7 +25,7 @@ class BoardSettings(models.Model):
     @classmethod
     def get_default_settings(cls):
         settings = BoardSettings(
-            sprint_start_date=datetime.today(),
+            sprint_start_date=date.today(),
             sprint_duration=timedelta(weeks=2),
             discussion_period=timedelta(days=4)
         )

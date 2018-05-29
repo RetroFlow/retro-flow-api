@@ -52,6 +52,12 @@ class Comment(models.Model):
     item = models.ForeignKey('Item', related_name='comments', on_delete=models.CASCADE)
     text = models.TextField(verbose_name='Comment body')
 
+    author = models.ForeignKey(
+        Profile,
+        related_name='comments',
+        on_delete=models.CASCADE
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
