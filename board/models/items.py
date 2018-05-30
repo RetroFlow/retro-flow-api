@@ -61,6 +61,13 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def board(self):
+        return self.item.board
+
+    def __str__(self):
+        return "{} | {}".format(self.author.username, self.item)
+
 
 class Assignee(models.Model):
     class Type(DjangoChoices):
@@ -140,6 +147,13 @@ class Item(models.Model):
     def get_assignees(self):
         return map(lambda assign: assign.assignee, self.assignees)
 
+    def __str__(self):
+        return "{} | {}".format(self.heading, self.author)
+
+    @property
+    def board(self):
+        return self.column.sprint.board
+
 
 class Vote(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -154,3 +168,6 @@ class Vote(models.Model):
         on_delete=models.CASCADE,
         related_name='items',
     )
+
+    class Meta:
+        unique_together = ("item", "profile")

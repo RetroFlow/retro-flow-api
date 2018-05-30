@@ -16,7 +16,7 @@ class IsCreatorOrAdmin(permissions.BasePermission):
 
 
 class IsAuthorOrAdmin(permissions.BasePermission):
-    message = 'Action not allowed for non-admin.'
+    message = 'Action is allowed only for admin or author.'
 
     def has_object_permission(self, request, view, obj):
         return obj.author.id == request.user.profile.id or \
@@ -24,8 +24,17 @@ class IsAuthorOrAdmin(permissions.BasePermission):
 
 
 class IsReadOrAdmin(permissions.BasePermission):
-    message = 'Action not allowed for non-admin.'
+    message = 'Modification is not allowed for non-admin.'
 
     def has_object_permission(self, request, view, obj):
         return view.action == 'list' or view.action == 'retrieve' or \
             request.user.profile.teams.filter(id=obj.board.team.id).role.is_admin_or_creator()
+
+
+class IsAuthorOrAdminOrRead(permissions.BasePermission):
+    message = 'Modification is allowed only for admin or author.'
+
+    def has_object_permission(self, request, view, obj):
+        return obj.author.id == request.user.profile.id or \
+               view.action == 'list' or view.action == 'retrieve' or \
+               request.user.profile.teams.filter(id=obj.board.team.id).role.is_admin_or_creator()

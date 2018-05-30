@@ -12,10 +12,13 @@ urlpatterns = [
 
         url(r'^boards/(?P<pk>(\d+))/start_new_sprint', views.BoardViewSet.as_view(actions={'get': 'start_new_sprint'})),
         url(r'^boards/(?P<pk>(\d+))/', views.BoardViewSet.as_view(actions={'delete': 'destroy'})),
+        url(r'^board/(?P<pk>(\d+))/', views.DeepBoardViewSet.as_view(actions={'get': 'retrieve'})),
         url(r'^boards/', views.BoardViewSet.as_view(actions={'get': 'list', 'post': 'create'})),
 
         url(r'^profiles/', views.UserProfileViewSet.as_view(actions={'get': 'list'})),
         url(r'^profile/', views.UserProfileViewSet.as_view(actions={'get': 'retrieve',  'patch': 'partial_update'})),
+        url(r'^vote/', views.VoteViewSet.as_view(actions={'post': 'create'})),
+        url(r'^vote/(?P<pk>(\d+))/', views.VoteViewSet.as_view(actions={'delete': 'destroy'})),
 
 ]
 
@@ -27,3 +30,4 @@ members_router.register('members', views.TeamMembersViewSet, base_name='members'
 
 urlpatterns += team_router.urls
 urlpatterns += members_router.urls
+
