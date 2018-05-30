@@ -16,6 +16,8 @@ PyJWT = "==1.6.4"
 gunicorn = "*"
 django-heroku = "*"
 "psycopg2" = "*"
+"psycopg2-binary" = "*"
+drf-nested-routers = "*"
 
 [dev-packages]
 
