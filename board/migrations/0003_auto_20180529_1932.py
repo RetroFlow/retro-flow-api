@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='columntemplate',
             name='settings',
-            field=ColumnTemplate.UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='column_names', to='board.BoardSettings'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='column_names', to='board.BoardSettings'),
         ),
     ]

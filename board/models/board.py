@@ -1,8 +1,11 @@
-from django.db import models
+from django.db import models, transaction
 from datetime import datetime, timedelta, date
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from djchoices import ChoiceItem, DjangoChoices
+from django.db.models.signals import post_save
 from .items import ItemStatus
+from .team import Team
 
 
 class BoardSettings(models.Model):
@@ -48,14 +51,12 @@ class Column(models.Model):
 
 
 class ColumnTemplate(models.Model):
-    class UnsavedForeignKey(models.ForeignKey):
-        # A ForeignKey which can point to an unsaved object
-        allow_unsaved_instance_assignment = True
+
     name = models.CharField(
         max_length=40,
         verbose_name=_('Name'),
     )
-    settings = UnsavedForeignKey(
+    settings = models.ForeignKey(
         'BoardSettings',
         on_delete=models.CASCADE,
         related_name='column_names'
@@ -68,8 +69,8 @@ class Sprint(models.Model):
         auto_now=True
     )
 
-    duration = models.DurationField(
-        verbose_name=_('Duration')
+    duration = models.IntegerField(
+        verbose_name=_('Duration in days')
     )
     board = models.ForeignKey(
         'Board',
@@ -123,6 +124,33 @@ class Board(models.Model):
         blank=True,
         related_name='board_where_is_previous'
     )
-
+    team = models.OneToOneField(
+        'Team',
+        null=True,
+        blank=True,
+        related_name='board',
+        on_delete=models.SET_NULL
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-    # TODO: add board statuses
+
+    @property
+    def board(self):
+        return self
+
+    def move_to_discussion(self):
+        self.status = self.Status.DISCUSSION
+        self.save()
+
+    def start_new_sprint(self):
+        with transaction.atomic():
+            new_sprint = Sprint(duration=self.settings.sprint_duration, board=self)
+            new_sprint.save()
+
+            for temp in self.settings.column_names.all():
+                c = Column(sprint=new_sprint, name=temp.name)
+                c.save()
+            self.previous_sprint = self.current_sprint
+            self.current_sprint = new_sprint
+            self.status = self.Status.RUNNING
+            self.save()
+

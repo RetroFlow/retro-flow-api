@@ -77,16 +77,10 @@ class Profile(models.Model):
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profile_for_new_user(sender, created, instance, **kwargs):
     if created:
-        profile = Profile(user=instance)
+        public_info = PublicInfo()
+        public_info.save()
+        profile = Profile(user=instance, public_info=public_info)
         profile.save()
-
-
-@receiver(post_save, sender=Profile)
-def create_public_info_for_new_user(sender, created, instance, **kwargs):
-    if created:
-        public_info = PublicInfo.objects.create()
-        instance.public_info = public_info
-        public_info.save()  # TODO: check whether it is a working approach
 
 
 class UserRole(models.Model):
@@ -111,6 +105,12 @@ class UserRole(models.Model):
         # TODO: add default role proper management
         return cls.objects.get(code=cls.Role.REGULAR_USER).id
 
+    def is_creator(self):
+        return self.code == self.Role.OWNER
+
+    def is_admin_or_creator(self):
+        return self.code == self.Role.OWNER or self.code == self.Role.ADMIN
+
     def __str__(self):
         return "{}".format(self.code)
 
@@ -126,6 +126,15 @@ class Team(models.Model):
         res = list(map(GroupAssignee, self.groups.all()))
         res.extend(map(UserProfileAssignee, self.members.all()))
         return res
+
+    def add_member(self, profile, role=UserRole.Role.REGULAR_USER):
+        r = UserRole.objects.get(code=role)
+        member_info = MembershipInfo(
+            profile=profile,
+            team=self,
+            role=r
+        )
+        member_info.save()
 
 
 class Group(models.Model):
@@ -181,3 +190,7 @@ class MembershipInfo(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def board(self):
+        return self.team.board
