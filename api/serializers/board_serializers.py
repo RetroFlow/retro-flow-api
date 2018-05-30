@@ -1,7 +1,8 @@
 from rest_framework.serializers import ModelSerializer
 from board.models import BoardSettings
-from board.models.board import  ColumnTemplate, Board
+from board.models.board import ColumnTemplate, Board, Sprint
 from rest_framework import serializers
+
 
 class BoardTemplateSerializer(ModelSerializer):
     class Meta:
@@ -29,9 +30,9 @@ class BoardSerializer(ModelSerializer):
     status = serializers.CharField(source='get_status_display', read_only=True)
 
     class Meta:
-        fields = ['name', 'settings', 'status', 'created_at']
+        fields = ['name', 'settings', 'status', 'created_at', 'team_id', 'id']
         model = Board
-        read_only_fields = ('created_at', 'status')
+        read_only_fields = ('created_at', 'status', 'id', 'team_id')
 
     def create(self, validated_data):
         settings = validated_data.pop('settings')
@@ -39,3 +40,9 @@ class BoardSerializer(ModelSerializer):
         settings = BoardSettingsSerializer().create(settings)
         board = Board.objects.create(settings=settings, **validated_data)
         return board
+
+
+class SprintSerializer(ModelSerializer):
+    class Meta:
+        model = Sprint
+        fields = '__all__'

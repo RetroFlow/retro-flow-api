@@ -1,1 +1,1 @@
-from .board_views import BoardSettingsApiView, BoardViewSet
+from .board_views import BoardSettingsApiView, BoardViewSet, UserProfileViewSet, TeamViewSet, TeamMembersViewSet
