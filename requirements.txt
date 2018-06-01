@@ -7,3 +7,7 @@ djangorestframework==3.8.2
 django_extensions
 flex
 swagger_spec_validator
+django_rest_framework_nested
+drf-nested-routers
+psycopg2
+psycopg2-binary
