@@ -25,6 +25,10 @@ class BoardSettings(models.Model):
     def active_statuses(self):
         return ItemStatus.objects.filter(is_active=True)
 
+    @property
+    def statuses(self):
+        return ItemStatus.objects.all()
+
     @classmethod
     def get_default_settings(cls):
 

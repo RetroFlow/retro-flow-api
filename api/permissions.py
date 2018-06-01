@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from board.models import MembershipInfo
 
 
 class IsCreator(permissions.BasePermission):
@@ -28,7 +29,7 @@ class IsReadOrAdmin(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return view.action == 'list' or view.action == 'retrieve' or \
-            request.user.profile.teams.filter(id=obj.board.team.id).role.is_admin_or_creator()
+            MembershipInfo.objects.get(profile_id=request.user.profile.id, team_id=obj.board.team.id).role.is_admin_or_creator()
 
 
 class IsAuthorOrAdminOrRead(permissions.BasePermission):

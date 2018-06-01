@@ -139,6 +139,9 @@ class Team(models.Model):
         )
         member_info.save()
 
+    def __str__(self):
+        return str(self.board)
+
 
 class Group(models.Model):
     name = models.CharField(
@@ -171,6 +174,10 @@ class Group(models.Model):
         verbose_name=_('Team'),
         on_delete=models.CASCADE,
     )
+
+    @property
+    def board(self):
+        return self.team.board
 
 
 class MembershipInfo(models.Model):

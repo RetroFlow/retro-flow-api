@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from board.models import team as team_models
 from rest_framework import serializers
+from .assignee_serializers import GroupSerializer
 
 
 class PublicInfoSerializer(ModelSerializer):
@@ -30,7 +31,8 @@ class MembershipSerializer(ModelSerializer):
 
 class TeamSerializer(ModelSerializer):
     members_info = MembershipSerializer(many=True, read_only=True)
+    groups = GroupSerializer(many=True, read_only=True)
 
     class Meta:
         model = team_models.Team
-        fields = ['id', 'members_info']
+        fields = ['id', 'members_info', 'groups']

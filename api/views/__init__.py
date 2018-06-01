@@ -1,7 +1,7 @@
 from .board_views import (
-    BoardSettingsApiView, BoardViewSet, UserProfileViewSet, TeamViewSet, TeamMembersViewSet, DeepBoardViewSet
+    BoardSettingsApiView, BoardViewSet, UserProfileViewSet, TeamViewSet, TeamMembersViewSet, DeepBoardViewSet, GroupsViewSet
 )
 
 from .item_views import (
-    VoteViewSet, CommentsViewSet, ItemViewSet, CommentsViewSet, PlainItemViewSet
+    VoteViewSet, CommentsViewSet, CommentsViewSet, PlainItemViewSet
 )

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from board.models import ItemStatus, Item, Profile, Comment, Vote
+from board.models import ItemStatus, Item, Profile, Comment, Vote, Column
 from rest_framework import serializers
 
 
@@ -33,21 +33,31 @@ class CommentSerializer(ModelSerializer):
 
 class VoteSerializer(ModelSerializer):
     profile_info = CommentAuthorSerializer(read_only=True, source='profile')
-    profile_id = serializers.PrimaryKeyRelatedField(source='profile', queryset=Profile.objects.all())
     item_id = serializers.PrimaryKeyRelatedField(source='item', queryset=Item.objects.all())
 
     class Meta:
         model = Vote
         fields = ['profile_id', 'item_id', 'profile_info']
 
+    def create(self, validated_data):
+        validated_data['profile_id'] = self.context['view'].request.user.profile.id
+        return ModelSerializer.create(self, validated_data)
+
 
 class ItemSerializer(ModelSerializer):
     votes = VoteSerializer(read_only=True, many=True)
-    status = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all())
+    status = serializers.SlugRelatedField(slug_field='code', required=False, queryset=ItemStatus.objects.all())
+    column_id = serializers.PrimaryKeyRelatedField(queryset=Column.objects.all(), source='column')
 
     class Meta:
         model = Item
-        fields = ['id', 'votes', 'vote_count', 'created_at', 'updated_at', 'author_id', 'heading', 'description', 'status']
+        fields = ['id', 'votes', 'vote_count', 'created_at',
+                  'updated_at', 'author_id', 'heading',
+                  'description', 'status', 'column_id']
+
+    def create(self, validated_data):
+        validated_data['author_id'] = self.context['view'].request.user.profile.id
+        return ModelSerializer.create(self, validated_data)
 
 
 class PlainItemSerializer(ModelSerializer):
@@ -55,3 +65,4 @@ class PlainItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = ['id', 'heading']
+

@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from board.models import BoardSettings
-from board.models.board import ColumnTemplate, Board, Sprint, Column
+from board.models.board import ColumnTemplate, Board, Sprint, Column, ItemStatus
 from rest_framework import serializers
 from .item_serializers import ItemSerializer
 
@@ -13,9 +13,12 @@ class BoardTemplateSerializer(ModelSerializer):
 
 class BoardSettingsSerializer(ModelSerializer):
     column_names = BoardTemplateSerializer(many=True)
+    active_statuses = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all(), many=True)
+    statuses = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all(), many=True)
 
     class Meta:
-        fields = ['sprint_start_date', 'discussion_period', 'icon', 'sprint_duration', 'column_names']
+        fields = ['sprint_start_date', 'discussion_period', 'icon', 'sprint_duration',
+                  'column_names', 'statuses', 'active_statuses']
         model = BoardSettings
 
     def create(self, validated_data):
