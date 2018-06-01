@@ -1,32 +1,28 @@
-from rest_framework.views import APIView
-from ..serializers.board_serializers import BoardSettingsSerializer, BoardSerializer, SprintSerializer, DeepBoardSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin,\
-    RetrieveModelMixin, DestroyModelMixin
-from rest_framework import status
+from rest_framework import mixins, status, views, decorators
 from django.shortcuts import get_object_or_404
 from board import servises
 from board import models as board_models
-from ..serializers import team_serializers as ts
-from ..serializers import assignee_serializers as as_ser
-from rest_framework.decorators import action
-from ..permissions import IsCreator, IsAuthorOrAdmin, IsCreatorOrAdmin, IsReadOrAdmin
+from .. import serializers
+from .. import permissions
 
 
-class BoardSettingsApiView(APIView):
+class BoardSettingsApiView(views.APIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = BoardSettingsSerializer
+    serializer_class = serializers.BoardSettingsSerializer
 
     def get(self, request):
         settings = servises.get_default_board_setting()
         return Response(settings, status=status.HTTP_200_OK)
 
 
-class BoardViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, DestroyModelMixin):
+class BoardViewSet(GenericViewSet,
+                   mixins.CreateModelMixin, mixins.ListModelMixin,
+                   mixins.DestroyModelMixin):
     permission_classes = (IsAuthenticated, )
-    serializer_class = BoardSerializer
+    serializer_class = serializers.BoardSerializer
 
     def get_queryset(self):
         return servises.get_boards(user=self.request.user)
@@ -35,29 +31,31 @@ class BoardViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, DestroyMode
         team = servises.create_new_team(self.request.user)
         serializer.save(team_id=team.id)
 
-    @action(permission_classes=[IsCreator], detail=True)
+    @decorators.action(permission_classes=[permissions.IsCreator], detail=True)
     def destroy(self, request, *args, **kwargs):
-        return DestroyModelMixin.destroy(self, request, *args, **kwargs)
+        return mixins.DestroyModelMixin.destroy(self, request, *args, **kwargs)
 
-    @action(permission_classes=[IsCreator], detail=True, url_path='start_new_sprint', methods=['GET'])
+    @decorators.action(permission_classes=[permissions.IsCreator], detail=True, url_path='start_new_sprint', methods=['GET'])
     def start_new_sprint(self, request, *args, **kwargs):
         board = self.get_object()
         board.start_new_sprint()
-        sprint = SprintSerializer(board.current_sprint)
+        sprint = serializers.SprintSerializer(board.current_sprint)
         return Response(status=status.HTTP_201_CREATED, data=sprint.data)
 
 
-class DeepBoardViewSet(GenericViewSet, RetrieveModelMixin):
+class DeepBoardViewSet(GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = (IsAuthenticated, )
-    serializer_class = DeepBoardSerializer
+    serializer_class = serializers.DeepBoardSerializer
 
     def get_queryset(self):
         return servises.get_boards(user=self.request.user)
 
 
-class UserProfileViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin, ListModelMixin):
-    permission_classes = (IsAuthenticated, IsReadOrAdmin)
-    serializer_class = ts.UserProfileSerializer
+class UserProfileViewSet(GenericViewSet,
+                         mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                         mixins.ListModelMixin):
+    permission_classes = (IsAuthenticated, permissions.IsReadOrAdmin)
+    serializer_class = serializers.UserProfileSerializer
 
     def get_queryset(self):
         return board_models.Profile.objects.all()
@@ -66,31 +64,36 @@ class UserProfileViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin, L
         return board_models.Profile.objects.get(id=self.request.user.profile.id)
 
 
-class TeamViewSet(GenericViewSet, RetrieveModelMixin, ListModelMixin):
+class TeamViewSet(GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     permission_classes = (IsAuthenticated, )
-    serializer_class = ts.TeamSerializer
+    serializer_class = serializers.TeamSerializer
 
     def get_queryset(self):
         return servises.get_teams(user=self.request.user)
 
 
-class TeamMembersViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, DestroyModelMixin):
-    permission_classes = (IsAuthenticated, IsReadOrAdmin)
-    serializer_class = ts.MembershipSerializer
+class TeamMembersViewSet(GenericViewSet,
+                         mixins.ListModelMixin, mixins.CreateModelMixin,
+                         mixins.DestroyModelMixin):
+
+    permission_classes = (IsAuthenticated, permissions.IsReadOrAdmin)
+    serializer_class = serializers.MembershipSerializer
 
     def get_queryset(self):
         return board_models.MembershipInfo.objects.filter(team_id=self.kwargs['team_pk'])
 
 
-class GroupsViewSet(GenericViewSet, ListModelMixin, CreateModelMixin,
-                    DestroyModelMixin, RetrieveModelMixin, UpdateModelMixin):
-    permission_classes = (IsAuthenticated, IsReadOrAdmin)
-    serializer_class = ts.GroupSerializer
+class GroupsViewSet(GenericViewSet,
+                    mixins.ListModelMixin, mixins.CreateModelMixin,
+                    mixins.DestroyModelMixin, mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin):
+    permission_classes = (IsAuthenticated, permissions.IsReadOrAdmin)
+    serializer_class = serializers.GroupSerializer
 
     def get_queryset(self):
         return board_models.Group.objects.filter(team_id=self.kwargs['team_pk'])
 
-    @action(methods=['POST'], detail=True, url_path='add_members')
+    @decorators.action(methods=['POST'], detail=True, url_path='add_members')
     def add(self, request, *args, **kwargs):
 
         """
@@ -100,7 +103,7 @@ class GroupsViewSet(GenericViewSet, ListModelMixin, CreateModelMixin,
 
         """
 
-        s = as_ser.GroupMembersSerializer(data=self.request.data)
+        s = serializers.GroupMembersSerializer(data=self.request.data)
         s.is_valid(raise_exception=True)
         members = s.data['members']
         group = self.get_object()
@@ -109,7 +112,7 @@ class GroupsViewSet(GenericViewSet, ListModelMixin, CreateModelMixin,
         group.save()
         return Response(data=self.serializer_class(group).data,  status=status.HTTP_202_ACCEPTED)
 
-    @action(methods=['POST'], detail=True, url_path='remove_members')
+    @decorators.action(methods=['POST'], detail=True, url_path='remove_members')
     def remove(self, request, *args, **kwargs):
 
         """
@@ -119,7 +122,7 @@ class GroupsViewSet(GenericViewSet, ListModelMixin, CreateModelMixin,
 
         """
 
-        s = as_ser.GroupMembersSerializer(data=self.request.data)
+        s = serializers.GroupMembersSerializer(data=self.request.data)
 
         s.is_valid(raise_exception=True)
 

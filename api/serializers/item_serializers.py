@@ -20,14 +20,14 @@ class CommentAuthorSerializer(ModelSerializer):
 class CommentSerializer(ModelSerializer):
 
     author_info = CommentAuthorSerializer(read_only=True, source='author')
-    author = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Profile.objects.all())
 
     class Meta:
         model = Comment
-        fields = ['id', 'author', 'item_id', 'author_info', 'created_at', 'text']
+        fields = ['id', 'item_id', 'author_info', 'created_at', 'text']
 
     def create(self, validated_data):
         validated_data['item_id'] = self.context['view'].kwargs['item_pk']
+        validated_data['author_id'] = self.context['view'].request.user.profile.id
         return ModelSerializer.create(self, validated_data)
 
 
@@ -65,4 +65,3 @@ class PlainItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = ['id', 'heading']
-
