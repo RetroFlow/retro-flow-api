@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 
 
-class BaseTest(TestCase):
+class BaseTestApi(TestCase):
 
     def setUpClass(cls):
         cls.client = Client()
