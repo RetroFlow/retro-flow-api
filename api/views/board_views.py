@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from ..serializers.board_serializers import BoardSettingsSerializer, BoardSerializer, SprintSerializer
+from ..serializers.board_serializers import BoardSettingsSerializer, BoardSerializer, SprintSerializer, DeepBoardSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -44,6 +44,14 @@ class BoardViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, DestroyMode
         board.start_new_sprint()
         sprint = SprintSerializer(board.current_sprint)
         return Response(status=status.HTTP_201_CREATED, data=sprint.data)
+
+
+class DeepBoardViewSet(GenericViewSet, RetrieveModelMixin):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = DeepBoardSerializer
+
+    def get_queryset(self):
+        return servises.get_boards(user=self.request.user)
 
 
 class UserProfileViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin, ListModelMixin):

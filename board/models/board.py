@@ -49,6 +49,9 @@ class Column(models.Model):
     def board(self):
         return self.sprint.board
 
+    def __str__(self):
+        return "{}:{}".format(self.sprint.start_date, self.name)
+
 
 class ColumnTemplate(models.Model):
 
@@ -61,6 +64,8 @@ class ColumnTemplate(models.Model):
         on_delete=models.CASCADE,
         related_name='column_names'
     )
+    def __str__(self):
+        return self.name
 
 
 class Sprint(models.Model):
@@ -153,4 +158,7 @@ class Board(models.Model):
             self.current_sprint = new_sprint
             self.status = self.Status.RUNNING
             self.save()
+
+    def __str__(self):
+        return "{}|{}".format(self.name, self.status)
 

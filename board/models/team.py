@@ -73,6 +73,9 @@ class Profile(models.Model):
     def username(self):
         return self.user.username
 
+    def __str__(self):
+        return self.full_name
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profile_for_new_user(sender, created, instance, **kwargs):

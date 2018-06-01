@@ -1,7 +1,8 @@
 from rest_framework.serializers import ModelSerializer
 from board.models import BoardSettings
-from board.models.board import ColumnTemplate, Board, Sprint
+from board.models.board import ColumnTemplate, Board, Sprint, Column
 from rest_framework import serializers
+from .item_serializers import ItemSerializer
 
 
 class BoardTemplateSerializer(ModelSerializer):
@@ -42,7 +43,29 @@ class BoardSerializer(ModelSerializer):
         return board
 
 
+class ColumnSerializer(ModelSerializer):
+    items = ItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Column
+        fields = '__all__'
+
+
 class SprintSerializer(ModelSerializer):
+    columns = ColumnSerializer(many=True, read_only=True)
+
     class Meta:
         model = Sprint
         fields = '__all__'
+
+
+class DeepBoardSerializer(ModelSerializer):
+    settings = BoardSettingsSerializer(read_only=True)
+    status = serializers.CharField(source='get_status_display', read_only=True)
+    current_sprint = SprintSerializer(read_only=True)
+    previous_sprint = SprintSerializer(read_only=True)
+
+    class Meta:
+        fields = ['name', 'settings', 'status', 'created_at', 'team_id', 'id', 'current_sprint', 'previous_sprint']
+        model = Board
+        read_only_fields = ('created_at', 'status', 'id', 'team_id')
