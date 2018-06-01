@@ -1,45 +1,35 @@
-from rest_framework.views import APIView
-from ..serializers.board_serializers import BoardSettingsSerializer, BoardSerializer, SprintSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin,\
-    RetrieveModelMixin, DestroyModelMixin
-from rest_framework import status
-from rest_framework.renderers import JSONRenderer
-from board import servises
+from rest_framework import mixins
 from board import models as board_models
-from ..serializers import item_serializers as it_s
-from ..permissions import IsCreator, IsAuthorOrAdmin, IsCreatorOrAdmin, IsReadOrAdmin, IsAuthorOrAdminOrRead, IsTeamMember, IsAuthor
+from ..import serializers
+from .. import permissions
 
 
-# class ItemViewSet(GenericViewSet, CreateModelMixin, UpdateModelMixin, DestroyModelMixin):
-#     serializer_class = it_s.ItemSerializer
-#     permission_classes = [IsAuthenticated, IsAuthorOrAdminOrRead]
-#
-#     def get_queryset(self):
-#         return board_models.Item.objects.all()
-
-
-class VoteViewSet(GenericViewSet, CreateModelMixin, DestroyModelMixin):
-    serializer_class = it_s.VoteSerializer
+class VoteViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.DestroyModelMixin):
+    serializer_class = serializers.VoteSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
         return board_models.Vote.objects.filter(profile_id=self.request.user.profile.id)
 
 
-class PlainItemViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin):
-    permission_classes = (IsAuthenticated, )
-    serializer_class = it_s.ItemSerializer
+class PlainItemViewSet(GenericViewSet,
+                       mixins.RetrieveModelMixin, mixins.CreateModelMixin,
+                       mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    permission_classes = (IsAuthenticated, permissions.IsAuthorOrAdminOrRead)
+    serializer_class = serializers.ItemSerializer
 
     def get_queryset(self):
         return board_models.Item.objects.all()
 
 
-class CommentsViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, CreateModelMixin, DestroyModelMixin):
-    permission_classes = (IsAuthenticated, IsAuthor)
-    serializer_class = it_s.CommentSerializer
+class CommentsViewSet(GenericViewSet,
+                      mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                      mixins.CreateModelMixin, mixins.DestroyModelMixin):
+
+    permission_classes = (IsAuthenticated, permissions.IsAuthorOrAdminOrRead)
+    serializer_class = serializers.CommentSerializer
 
     def get_queryset(self):
         return board_models.Comment.objects.filter(item_id=self.kwargs['item_pk'])

@@ -9,6 +9,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from board import servises
 from board import models as board_models
+from .. import serializers
 from ..serializers import team_serializers as ts
 from ..serializers import assignee_serializers as as_ser
 from rest_framework.decorators import action

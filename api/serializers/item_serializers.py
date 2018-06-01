@@ -65,4 +65,3 @@ class PlainItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = ['id', 'heading']
-

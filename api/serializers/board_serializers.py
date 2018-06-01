@@ -13,8 +13,10 @@ class BoardTemplateSerializer(ModelSerializer):
 
 class BoardSettingsSerializer(ModelSerializer):
     column_names = BoardTemplateSerializer(many=True)
-    active_statuses = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all(), many=True)
-    statuses = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all(), many=True)
+    active_statuses = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all(),
+                                                   many=True, required=False)
+    statuses = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all(),
+                                            many=True, required=False)
 
     class Meta:
         fields = ['sprint_start_date', 'discussion_period', 'icon', 'sprint_duration',
