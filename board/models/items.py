@@ -144,11 +144,15 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def vote_count(self):
+        return self.votes.count()
+
     def get_assignees(self):
         return map(lambda assign: assign.assignee, self.assignees)
 
     def __str__(self):
-        return "{} | {}".format(self.heading, self.author)
+        return "{} | {} | {}".format(self.id, self.heading, self.author)
 
     @property
     def board(self):
@@ -166,7 +170,7 @@ class Vote(models.Model):
     item = models.ForeignKey(
         Item,
         on_delete=models.CASCADE,
-        related_name='items',
+        related_name='votes',
     )
 
     class Meta:

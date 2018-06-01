@@ -19,26 +19,39 @@ class CommentAuthorSerializer(ModelSerializer):
 
 class CommentSerializer(ModelSerializer):
 
-    author = CommentAuthorSerializer(read_only=True)
+    author_info = CommentAuthorSerializer(read_only=True, source='author')
+    author = serializers.PrimaryKeyRelatedField(write_only=True, queryset=Profile.objects.all())
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ['id', 'author', 'item_id', 'author_info', 'created_at', 'text']
+
+    def create(self, validated_data):
+        validated_data['item_id'] = self.context['view'].kwargs['item_pk']
+        return ModelSerializer.create(self, validated_data)
 
 
 class VoteSerializer(ModelSerializer):
-    author = CommentAuthorSerializer(read_only=True, source='profile')
+    profile_info = CommentAuthorSerializer(read_only=True, source='profile')
     profile_id = serializers.PrimaryKeyRelatedField(source='profile', queryset=Profile.objects.all())
     item_id = serializers.PrimaryKeyRelatedField(source='item', queryset=Item.objects.all())
+
     class Meta:
         model = Vote
-        fields = ['profile_id', 'item_id', 'author']
+        fields = ['profile_id', 'item_id', 'profile_info']
 
 
 class ItemSerializer(ModelSerializer):
-    comments = CommentSerializer(many=True, required=False, read_only=True)
     votes = VoteSerializer(read_only=True, many=True)
+    status = serializers.SlugRelatedField(slug_field='code', queryset=ItemStatus.objects.all())
 
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = ['id', 'votes', 'vote_count', 'created_at', 'updated_at', 'author_id', 'heading', 'description', 'status']
+
+
+class PlainItemSerializer(ModelSerializer):
+
+    class Meta:
+        model = Item
+        fields = ['id', 'heading']

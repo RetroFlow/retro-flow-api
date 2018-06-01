@@ -3,5 +3,5 @@ from .board_views import (
 )
 
 from .item_views import (
-    VoteViewSet, CommentViewSet
+    VoteViewSet, CommentsViewSet, ItemViewSet, CommentsViewSet, PlainItemViewSet
 )

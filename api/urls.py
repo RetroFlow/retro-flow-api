@@ -28,6 +28,13 @@ team_router.register(r'teams', views.TeamViewSet, base_name='teams')
 members_router = routers.NestedDefaultRouter(team_router, r'teams', lookup='team')
 members_router.register('members', views.TeamMembersViewSet, base_name='members')
 
+item_router = routers.DefaultRouter()
+item_router.register(r'items', views.PlainItemViewSet, base_name='items')
+
+comment_router = routers.NestedDefaultRouter(item_router, r'items', lookup='item')
+comment_router.register('comments', views.CommentsViewSet, base_name='comments')
+
 urlpatterns += team_router.urls
 urlpatterns += members_router.urls
-
+urlpatterns += item_router.urls
+urlpatterns += comment_router.urls
