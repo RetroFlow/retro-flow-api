@@ -1,7 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from django.contrib.auth import get_user_model
-from .models import team
+from board.models import team
 
 
 class TestProfileModel(TestCase):
@@ -42,12 +42,9 @@ class TestTeamCreation(TestCase):
         new_team = team.Team()
         new_team.save()
 
-        # TODO: remove role creation
-        role = team.UserRole(name="name")
-        role.save()
 
         # TODO: add "add_member" method to Team class
-        membership = team.MembershipInfo(profile=user.profile, team=new_team, role=role)
+        membership = team.MembershipInfo(profile=user.profile, team=new_team)
         membership.save()
 
         self.assertEqual(new_team.members.first(), user.profile)
@@ -81,12 +78,9 @@ class TestTeamCreation(TestCase):
         new_team = team.Team()
         new_team.save()
 
-        # TODO: remove role creation
-        role = team.UserRole(name="name")
-        role.save()
 
         # TODO: add "add_member" method to Team class
-        membership = team.MembershipInfo(profile=user.profile, team=new_team, role=role)
+        membership = team.MembershipInfo(profile=user.profile, team=new_team)
         membership.save()
 
         group = team.Group(name='group_name', team=new_team)
@@ -109,15 +103,11 @@ class TestTeamCreation(TestCase):
         new_team = team.Team()
         new_team.save()
 
-        # TODO: remove role creation
-        role = team.UserRole(name="name")
-        role.save()
-
         # TODO: add "add_member" method to Team class
-        membership1 = team.MembershipInfo(profile=user1.profile, team=new_team, role=role)
+        membership1 = team.MembershipInfo(profile=user1.profile, team=new_team)
         membership1.save()
 
-        membership2 = team.MembershipInfo(profile=user2.profile, team=new_team, role=role)
+        membership2 = team.MembershipInfo(profile=user2.profile, team=new_team)
         membership2.save()
 
         group = team.Group(name='group_name', team=new_team)
