@@ -1,0 +1,27 @@
+-   model: board.userrole
+    pk: 1
+    fields: {code: user, description: null}
+-   model: board.userrole
+    pk: 2
+    fields: {code: owner, description: null}
+-   model: board.userrole
+    pk: 3
+    fields: {code: admin, description: null}
+-   model: board.itemstatus
+    pk: 1
+    fields: {code: new, description: null, is_active: true}
+-   model: board.itemstatus
+    pk: 2
+    fields: {code: archived, description: null, is_active: false}
+-   model: board.itemstatus
+    pk: 3
+    fields: {code: closed, description: null, is_active: false}
+-   model: board.itemstatus
+    pk: 4
+    fields: {code: in_progress, description: null, is_active: true}
+-   model: board.itemstatus
+    pk: 5
+    fields: {code: pending, description: null, is_active: true}
+-   model: board.itemstatus
+    pk: 6
+    fields: {code: done, description: null, is_active: false}

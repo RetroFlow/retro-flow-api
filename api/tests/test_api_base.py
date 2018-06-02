@@ -4,9 +4,12 @@ from api.tests.utils import create_test_user_api, login
 
 
 class BaseTest(TestCase):
+    fixtures = ['board/fixtures/board.yaml', ]
 
     @classmethod
     def setUpClass(cls):
+        super(BaseTest, cls).setUpClass()
+
         cls.client = Client()
         create_test_user_api()
         token = login(cls.client)
@@ -15,4 +18,4 @@ class BaseTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        pass
+        super(BaseTest, cls).tearDownClass()
