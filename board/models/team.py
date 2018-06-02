@@ -1,8 +1,9 @@
-from django.db import models
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.translation import ugettext_lazy as _
+
 from .assignee import GroupAssignee, UserProfileAssignee
 
 
@@ -110,7 +111,7 @@ class UserRole(models.Model):
     @classmethod
     def get_default_role(cls):
         # TODO: add default role proper management
-        return cls.objects.get(code=cls.Role.REGULAR_USER).id
+        return cls.objects.get_or_create(code=cls.Role.REGULAR_USER)[0].id
 
     def is_creator(self):
         return self.code == self.Role.OWNER

@@ -1,6 +1,7 @@
 from django.db import models
-from djchoices import ChoiceItem, DjangoChoices
 from django.utils.translation import ugettext_lazy as _
+from djchoices import ChoiceItem, DjangoChoices
+
 from .team import Group, GroupAssignee, Profile, UserProfileAssignee
 
 
@@ -30,7 +31,7 @@ class ItemStatus(models.Model):
 
     @classmethod
     def get_default_item_status(cls):
-        return ItemStatus.objects.get(code=cls.Status.NEW).id
+        return ItemStatus.objects.get_or_create(code=cls.Status.NEW)[0].id
 
     def __str__(self):
         return "{}".format(self.code)

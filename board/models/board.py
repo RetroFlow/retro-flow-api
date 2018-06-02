@@ -1,11 +1,10 @@
+from datetime import datetime
+
 from django.db import models, transaction
-from datetime import datetime, timedelta, date
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from djchoices import ChoiceItem, DjangoChoices
-from django.db.models.signals import post_save
+
 from .items import ItemStatus
-from .team import Team
 
 
 class BoardSettings(models.Model):
