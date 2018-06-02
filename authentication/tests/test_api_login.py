@@ -4,7 +4,7 @@ from unittest_data_provider import data_provider
 from authentication.models import User
 from authentication.tests import BaseTestApi
 from staticfiles import urls
-from staticfiles.test_data import user_authentication_login as user
+from staticfiles.test_data import User_authentication_login as user
 
 
 class TestLoginApi(BaseTestApi):

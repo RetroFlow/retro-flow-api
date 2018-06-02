@@ -56,9 +56,13 @@ User_authentication_password_validation = {
     },
     'username': 'test_user_password_validation'
 }
-user_authentication_login = {
+User_authentication_login = {
     'email': 'login_email_1@mail.com',
     'password': 'password11'
+}
+User_default = {
+    'email': 'retroflow@mail.com',
+    'password': 'retroflow123'
 }
 Board_api_create_new_1 = {
     'name': 'test-board-1'
