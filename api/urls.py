@@ -36,8 +36,12 @@ item_router.register(r'items', views.PlainItemViewSet, base_name='items')
 comment_router = routers.NestedDefaultRouter(item_router, r'items', lookup='item')
 comment_router.register('comments', views.CommentsViewSet, base_name='comments')
 
+assign_router = routers.NestedDefaultRouter(item_router, r'items', lookup='item')
+assign_router.register('assignees', views.AssignViewSet, base_name='assignees')
+
 urlpatterns += team_router.urls
 urlpatterns += members_router.urls
 urlpatterns += item_router.urls
 urlpatterns += comment_router.urls
 urlpatterns += group_router.urls
+urlpatterns += assign_router.urls

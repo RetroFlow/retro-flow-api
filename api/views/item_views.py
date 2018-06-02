@@ -33,3 +33,12 @@ class CommentsViewSet(GenericViewSet,
 
     def get_queryset(self):
         return board_models.Comment.objects.filter(item_id=self.kwargs['item_pk'])
+
+
+class AssignViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.ListModelMixin):
+    permission_classes = [IsAuthenticated, permissions.IsTeamMember]
+
+    serializer_class = serializers.AssigneeSerializer
+
+    def get_queryset(self):
+        return board_models.Assignee.objects.all()

@@ -16,7 +16,8 @@ class UserProfileSerializer(ModelSerializer):
 
     class Meta:
         model = team_models.Profile
-        fields = ['public_info', 'full_name', 'username', 'icon', 'last_name', 'first_name', 'id']
+        fields = ['public_info', 'full_name', 'username', 'icon', 'last_name', 'first_name', 'id', 'email']
+        read_only_fields = ['email']
 
 
 class MembershipSerializer(ModelSerializer):

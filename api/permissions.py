@@ -7,7 +7,7 @@ def is_creator(request, obj):
 
 
 def is_admin_or_creator(request, obj):
-    MembershipInfo.objects.get(profile_id=request.user.profile.id, team_id=obj.board.team.id).is_admin_or_creator()
+    MembershipInfo.objects.get(profile_id=request.user.profile.id, team_id=obj.board.team.id).role.is_admin_or_creator()
 
 
 def is_author(request, obj):
@@ -19,7 +19,7 @@ def is_read(view):
 
 
 def is_team_member(request, obj):
-    return obj.board.team.members.contains(request.user.profile)
+    return obj.board.team.members.filter(id=request.user.profile.id).count() > 0
 
 
 class IsCreator(permissions.BasePermission):

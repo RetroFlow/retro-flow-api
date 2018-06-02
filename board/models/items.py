@@ -105,6 +105,10 @@ class Assignee(models.Model):
     )
 
     @property
+    def board(self):
+        return self.item.board
+
+    @property
     def assignee(self):
         if self.type == self.Type.USER:
             return UserProfileAssignee(self.profile)
